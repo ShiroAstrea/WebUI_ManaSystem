@@ -1,5 +1,3 @@
-# Brainboard auto-generated file.
-
 resource "aws_vpc" "vpc-nwl-346" {
   tags       = merge(var.tags, { Name = "vpc-nwl-346" })
   cidr_block = "10.0.0.0/16"
