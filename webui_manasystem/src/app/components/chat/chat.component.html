@@ -1,0 +1,31 @@
+<div class="chat-container">
+  <header class="chat-header">
+    <h1>Neuer Chat</h1>
+  </header>
+
+  <div class="messages-area" #scrollContainer>
+    <div *ngFor="let msg of messages$ | async" 
+         class="message-wrapper" 
+         [ngClass]="{'user-wrapper': msg.from === 'user', 'bot-wrapper': msg.from === 'bot'}">
+      
+      <div class="avatar" *ngIf="msg.from === 'bot'">AI</div>
+      
+      <div class="bubble">
+        <p>{{ msg.content }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrapper">
+      <textarea 
+        [(ngModel)]="userInput" 
+        (keydown)="onKeydown($event)"
+        placeholder="Nachricht an den Bot..." 
+        rows="1"></textarea>
+      <button (click)="sendMessage()" [disabled]="!userInput.trim()">
+        ↑
+      </button>
+    </div>
+  </div>
+</div>
