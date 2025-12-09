@@ -6,13 +6,12 @@
   <div class="messages-area" #scrollContainer>
     <div *ngFor="let msg of messages$ | async" 
          class="message-wrapper" 
-         [ngClass]="{'user-wrapper': msg.sender === 'user', 'bot-wrapper': msg.sender === 'bot'}">
+         [ngClass]="{'user-wrapper': msg.from === 'user', 'bot-wrapper': msg.from === 'bot'}">
       
-      <div class="avatar" *ngIf="msg.sender === 'bot'">AI</div>
+      <div class="avatar" *ngIf="msg.from === 'bot'">AI</div>
       
       <div class="bubble">
-        <p>{{ msg.text }}</p>
-        <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }}</span>
+        <p>{{ msg.content }}</p>
       </div>
     </div>
   </div>

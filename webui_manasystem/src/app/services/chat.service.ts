@@ -1,38 +1,39 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Message } from '../models/message.model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+interface ChatResponse {
+  response: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  // Initialer State mit einer Begrüßungsnachricht
-  private messagesSubject = new BehaviorSubject<Message[]>([
-    { text: 'Hallo! Ich bin dein KI-Assistent. Schreibe mir etwas!', sender: 'bot', timestamp: new Date() }
-  ]);
 
-  public messages$: Observable<Message[]> = this.messagesSubject.asObservable();
+  private apiUrl = environment.apiUrl;
 
-  sendMessage(text: string): void {
-    const currentMessages = this.messagesSubject.value;
-    
-    // 1. User Nachricht sofort anzeigen
-    const userMsg: Message = { text, sender: 'user', timestamp: new Date() };
-    this.messagesSubject.next([...currentMessages, userMsg]);
+  constructor(private http: HttpClient) {}
 
-    // 2. Antwort simulieren (Verzögerung für Realismus)
-    setTimeout(() => {
-      this.generateBotResponse();
-    }, 1500);
-  }
+  // sendMessage gibt jetzt Observable<string> zurück
+  sendMessage(message: string): Observable<string> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
 
-  private generateBotResponse(): void {
-    const currentMessages = this.messagesSubject.value;
-    const botMsg: Message = {
-      text: 'Das ist eine simulierte Antwort. Ich habe kein Backend, aber das UI funktioniert perfekt! 🤖',
-      sender: 'bot',
-      timestamp: new Date()
+    const payload = {
+      message: message,
+      session_id: 'api',
+      username: 'USERNAME67',
+      origin: 'local'
     };
-    this.messagesSubject.next([...currentMessages, botMsg]);
+
+    // http.post gibt Observable<ChatResponse> zurück
+    return this.http.post<ChatResponse>(`${this.apiUrl}/Chat`, payload, { headers })
+      .pipe(
+        map(res => res.response) // nur der Text wird zurückgegeben
+      );
   }
-} 
+}
